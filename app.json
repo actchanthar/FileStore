@@ -6,8 +6,8 @@
     "file",
     "sharing"
   ],
-  "repository": "https://github.com/Codeflix-Bots/FileStore",
-  "logo": "https://graph.org/file/6ceef6a98b82b0e0e2f03.jpg",
+  "repository": "https://github.com/CodeXBotz/File-Sharing-Bot",
+  "logo": "https://ibb.co/FgPVtzw",
   "env": {
     "TG_BOT_TOKEN": {
       "description": "Your Bot token, Get it from @Botfather",
@@ -15,7 +15,7 @@
     },
     "OWNER_ID": {
       "description": "An integer of consisting of your owner ID",
-      "value": "6497757690"
+      "value": "1250450587"
     },
     "APP_ID":{
       "description": "your app id, take it from my.telegram.org",
@@ -27,7 +27,7 @@
     },
     "DATABASE_NAME":{
       "description": "Enter your DATABASE_NAME ",
-      "value": "Cluster0"
+      "value": "filesharexbot"
     },
     "API_HASH":{
       "description": "your api hash, take it from my.telegram.org",
@@ -35,19 +35,35 @@
     },
     "CHANNEL_ID":{
       "description": "make a channel (database channel), then make the bot as admin in channel, and it's id",
-      "value": "-1001995978690"
+      "value": "-100"
     },
-    "FORCE_SUB_CHANNEL":{
+    "FORCE_SUB_CHANNEL_1":{
       "description": "id of the channel or group, if you want enable force sub feature else put 0",
-      "value": "-1001473043276"
+      "value": "0"
     },
-    "FORCE_SUB_CHANNEL2":{
+    "FORCE_SUB_CHANNEL_2":{
       "description": "id of the channel or group, if you want enable force sub feature else put 0",
-      "value": "-1001495022147"
+      "value": "0"
+    },
+    "FORCE_SUB_CHANNEL_3":{
+      "description": "id of the channel or group, if you want enable force sub feature else put 0",
+      "value": "0"
+    },
+    "FORCE_SUB_CHANNEL_4":{
+      "description": "id of the channel or group, if you want enable force sub feature else put 0",
+      "value": "0"
+    },
+    "START_MESSAGE": {
+      "description": "Optional: start message of bot, use HTML parsemode format",
+      "value": "Hello {first}\n\nI can store private files in Specified Channel and other users can access it from special link."
+    },
+    "FORCE_SUB_MESSAGE": {
+      "description": "Optional: Force Sub message of bot, use HTML parsemode format",
+      "value": "Hello {first}\n\n<b>You need to join in my Channel/Group to use me\n\nKindly Please join Channel</b>"
     },
     "ADMINS": {
       "description": "A space separated list of user_ids of Admins, they can only create links",
-      "value": "5115691197 6273945163 6103092779 5231212075",
+      "value": "",
       "required": false
     },
     "PROTECT_CONTENT": {
@@ -68,3 +84,4 @@
     }
   }
 }
+
