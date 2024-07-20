@@ -105,7 +105,7 @@ async def start_command(client: Client, message: Message):
 
 #=====================================================================================##
 
-WAIT_MSG = """"<b>Processing ....</b>"""
+WAIT_MSG = """"<b>ခဏစောင့်ပါ မကြပါဘူး ....</b>"""
 
 REPLY_ERROR = """<code>Use this command as a reply to any telegram message with out any spaces.</code>"""
 
