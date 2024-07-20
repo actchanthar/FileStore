@@ -41,7 +41,26 @@ FORCE_SUB_CHANNEL2 = int(os.environ.get("FORCE_SUB_CHANNEL2", "-1001644866777"))
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 
 #start message
-START_MSG = os.environ.get("START_MESSAGE", "<b>ʙᴀᴋᴋᴀᴀᴀ!! {first}\n\n ɪ ᴀᴍ ғɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ, ɪ ᴄᴀɴ sᴛᴏʀᴇ ᴘʀɪᴠᴀᴛᴇ ғɪʟᴇs ɪɴ sᴘᴇᴄɪғɪᴇᴅ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴏᴛʜᴇʀ ᴜsᴇʀs ᴄᴀɴ ᴀᴄᴄᴇss ɪᴛ ғʀᴏᴍ sᴘᴇᴄɪᴀʟ ʟɪɴᴋ.</b>")
+START_MSG = os.environ.get("START_MESSAGE", "<b>ʙᴀᴋᴋᴀᴀᴀ!! {first}\n\n Hello Gay... 
+
+⛔🔞18+ channel များ 🔞⛔⤵️
+
+ဝင်ပါ မဝင်ရင် မင်းသေလိမ့်မယ်
+
+နန်းဆု ယွန်းယွန်း အသစ်
+1. https://t.me/NangSuPearlHtethdlinkkk
+
+Hentai ရုပ်ပြ ၁၈+
+2. https://t.me/+eIaEdiiYZy1hZDU1
+
+အကုန်
+3. https://t.me/addlist/E6xNJDDlvj43ZGU1
+
+TikTok Cele Myanmar Hd 
+4. https://t.me/tiktokceleshd
+
+မသိရင် အသုံးပြုနည်းကို ဒီမှာကြည့်ပါ
+https://telegra.ph/How-to-watch-allcar-05-20</b>")
 try:
     ADMINS=[6376328008]
     for x in (os.environ.get("ADMINS", "5115691197 6273945163 6103092779 5231212075").split()):
@@ -50,10 +69,50 @@ except ValueError:
         raise Exception("Your Admins list does not contain valid integers.")
 
 #Force sub message 
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b>ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʀᴇʟᴏᴀᴅ button ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛᴇᴅ ꜰɪʟᴇ.</b>")
+FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b>ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʀᴇʟᴏᴀᴅ button ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛᴇᴅ ꜰɪʟᴇ. Hello Gay... 
+
+⛔🔞18+ channel များ 🔞⛔⤵️
+
+ဝင်ပါ မဝင်ရင် မင်းသေလိမ့်မယ်
+
+နန်းဆု ယွန်းယွန်း အသစ်
+1. https://t.me/NangSuPearlHtethdlinkkk
+
+Hentai ရုပ်ပြ ၁၈+
+2. https://t.me/+eIaEdiiYZy1hZDU1
+
+အကုန်
+3. https://t.me/addlist/E6xNJDDlvj43ZGU1
+
+TikTok Cele Myanmar Hd 
+4. https://t.me/tiktokceleshd
+
+မသိရင် အသုံးပြုနည်းကို ဒီမှာကြည့်ပါ
+https://telegra.ph/How-to-watch-allcar-05-20</b>")
 
 #set your Custom Caption here, Keep None for Disable Custom Caption
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ @OtakuFlix_Network</b>")
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• {filename} 
+
+Hello Gay... 
+
+⛔️🔞18+ channel များ 🔞⛔️⤵️
+
+ဝင်ပါ မဝင်ရင် မင်းသေလိမ့်မယ်
+
+နန်းဆု ယွန်းယွန်း အသစ်
+1. https://t.me/NangSuPearlHtethdlinkkk
+
+Hentai ရုပ်ပြ ၁၈+
+2. https://t.me/+eIaEdiiYZy1hZDU1
+
+အကုန်
+3. https://t.me/addlist/E6xNJDDlvj43ZGU1
+
+TikTok Cele Myanmar Hd 
+4. https://t.me/tiktokceleshd
+
+မသိရင် အသုံးပြုနည်းကို ဒီမှာကြည့်ပါ
+https://telegra.ph/How-to-watch-allcar-05-20</b>")
 
 #set True if you want to prevent users from forwarding files from bot
 PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
