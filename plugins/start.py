@@ -1,8 +1,3 @@
-#(©)Codeflix_Bots
-
-
-
-
 import os
 import asyncio
 from pyrogram import Client, filters, __version__
@@ -11,7 +6,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 
 from bot import Bot
-from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
+from config import ADMINS, OWNER_ID, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
 from helper_func import subscribed, encode, decode, get_messages
 from database.database import add_user, del_user, full_userbase, present_user
 
@@ -55,7 +50,7 @@ async def start_command(client: Client, message: Message):
                 ids = [int(int(argument[1]) / abs(client.db_channel.id))]
             except:
                 return
-        temp_msg = await message.reply("ᴡᴀɪᴛ ʙʀᴏᴏ...")
+        temp_msg = await message.reply("Wait A Second...")
         try:
             messages = await get_messages(client, ids)
         except:
@@ -87,15 +82,12 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-    
-    [
+                [
                     InlineKeyboardButton("⚡️ ᴀʙᴏᴜᴛ", callback_data = "about"),
-                    InlineKeyboardButton('👩‍💻 Dev', url='https://t.me/When_the_night_falls_my_soul_sea')
-                
-        
-    ]
+                    InlineKeyboardButton('🍁 ᴘʀᴇᴍɪᴜᴍ', url='https://t.me/OtakuFlix_Network/4639')
+                ]
             ]
-        )
+                )
         await message.reply_text(
             text = START_MSG.format(
                 first = message.from_user.first_name,
@@ -108,14 +100,14 @@ async def start_command(client: Client, message: Message):
             disable_web_page_preview = True,
             quote = True
         )
-        return
+        return   
 
-    
+
 #=====================================================================================##
 
-WAIT_MSG = """"<b>Processing ...</b>"""
+WAIT_MSG = """"<b>Processing ....</b>"""
 
-REPLY_ERROR = """<code>Use this command as a replay to any telegram message with out any spaces.</code>"""
+REPLY_ERROR = """<code>Use this command as a reply to any telegram message with out any spaces.</code>"""
 
 #=====================================================================================##
 
@@ -125,19 +117,15 @@ REPLY_ERROR = """<code>Use this command as a replay to any telegram message with
 async def not_joined(client: Client, message: Message):
     buttons = [
         [
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ဝင်ပါ ၁", url=client.invitelink),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ • ဝင်ပါ ၂", url=client.invitelink2),
-        ],
-        [
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ဝင်ပါ ၃", url=client.invitelink3),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ • ဝင်ပါ ၄", url=client.invitelink4),
+            InlineKeyboardButton(text="Join Channel", url=client.invitelink),
+            InlineKeyboardButton(text="Join Channel", url=client.invitelink2),
         ]
     ]
     try:
         buttons.append(
             [
                 InlineKeyboardButton(
-                    text = '• ɴᴏᴡ ᴄʟɪᴄᴋ ʜᴇʀᴇ • ဝင်ပြီးရင်ဒီမှာနှိပ်ပါ',
+                    text = 'Try Again',
                     url = f"https://t.me/{client.username}?start={message.command[1]}"
                 )
             ]
@@ -209,3 +197,4 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         msg = await message.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()
+
