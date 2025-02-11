@@ -36,7 +36,7 @@ async def start_command(client: Client, message: Message):
     if id in ADMINS:
         verify_status = {
             'is_verified': False,
-            'verify_token': None,  # Admins don't need a token
+            'verify_token': False,  # Admins don't need a token
             'verified_time': time.time(),
             'link': ""
         }
