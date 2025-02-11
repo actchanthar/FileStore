@@ -35,7 +35,7 @@ async def start_command(client: Client, message: Message):
     # Check if user is an admin and treat them as verified
     if id in ADMINS:
         verify_status = {
-            'is_verified': True,
+            'is_verified': False,
             'verify_token': None,  # Admins don't need a token
             'verified_time': time.time(),
             'link': ""
