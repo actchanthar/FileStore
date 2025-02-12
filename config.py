@@ -28,7 +28,7 @@ DB_URI = os.environ.get("DATABASE_URL", "")
 DB_NAME = os.environ.get("DATABASE_NAME", "Cluster0")
 
 #Time in seconds for message delete, put 0 to never delete
-TIME = int(os.environ.get("TIME", "10"))
+TIME = int(os.environ.get("TIME", "60"))
 
 
 #force sub channel id, if you want enable force sub
@@ -46,8 +46,8 @@ FORCE_PIC = os.environ.get("FORCE_PIC", "https://i.imghippo.com/files/fgmj5944fE
 # Turn this feature on or off using True or False put value inside  ""
 # TRUE for yes FALSE if no 
 TOKEN = True if os.environ.get('TOKEN', "False") == "True" else False 
-SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "publicearn.online")
-SHORTLINK_API = os.environ.get("SHORTLINK_API", "adabe1c0675be8ffc5ccbc84a9a65bc5a5d3ec69")
+SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "ouo.io")
+SHORTLINK_API = os.environ.get("SHORTLINK_API", "Y400jCYn")
 VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', 600)) # Add time in seconds
 IS_VERIFY = os.environ.get("IS_VERIFY", "True")
 TUT_VID = os.environ.get("TUT_VID","https://t.me/actanimemm/3")
@@ -77,7 +77,7 @@ CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ @actaninemm</b>")
 PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
 
 #Set true if you want Disable your Channel Posts Share button
-DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'False'
+DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True'
 
 BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
 USER_REPLY_TEXT = "ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!! ❌Bot ကိုစာပို့လို့မရပါဘူးနော်😅။ရုပ်ရှင်သီးသန့်ပဲပို့ပေးတာပါ။ "
