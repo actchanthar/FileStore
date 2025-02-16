@@ -169,12 +169,10 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-
-    [
+                [
                     InlineKeyboardButton(" ⚡️ About Me", callback_data = "about"),
                     InlineKeyboardButton(' 👩‍💻 Dev', url='https://t.me/actanibot?start=start')
-
-    ]
+                ]
             ]
         )
         await message.reply_photo(
@@ -186,12 +184,9 @@ async def start_command(client: Client, message: Message):
                 mention=message.from_user.mention,
                 id=message.from_user.id
             ),
-            reply_markup=reply_markup#,
-            #message_effect_id=5104841245755180586  # 🔥
+            reply_markup=reply_markup
         )
         return
-
-
 
 #=====================================================================================##
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
@@ -256,10 +251,8 @@ async def not_joined(client: Client, message: Message):
         mention=message.from_user.mention,
         id=message.from_user.id
     ),
-    reply_markup=InlineKeyboardMarkup(buttons)#,
-    #message_effect_id=5104841245755180586  # Add the effect ID here
+    reply_markup=InlineKeyboardMarkup(buttons)
 )
-
 
 #=====================================================================================##
 
@@ -268,7 +261,6 @@ WAIT_MSG = "<b>လုပ်ဆောင်နေပါသည်...</b>"
 REPLY_ERROR = "<code>Use this command as a reply to any telegram message without any spaces.</code>"
 
 #=====================================================================================##
-
 
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
