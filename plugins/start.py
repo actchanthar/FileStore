@@ -9,6 +9,7 @@ import time
 import string
 import string as rohit
 import humanize
+import aiohttp
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -22,6 +23,21 @@ from database.database import *
 # File auto-delete time in seconds (Set your desired time in seconds here)
 FILE_AUTO_DELETE = TIME  # Example: 3600 seconds (1 hour)
 TUT_VID = f"{TUT_VID}"
+
+async def get_shortlink(shortlink_url, shortlink_api, url):
+    """Generate shortlink using ouo.io API"""
+    try:
+        api_url = f"http://ouo.io/api/{shortlink_api}?s={url}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url) as response:
+                if response.status == 200:
+                    return await response.text()
+                else:
+                    return f"http://ouo.io/qs/{shortlink_api}?s={url}"
+    except Exception as e:
+        print(f"Error generating shortlink: {e}")
+        return url
 
 @Bot.on_message(filters.command('start') & filters.private & subscribed1 & subscribed2 & subscribed3 & subscribed4)
 async def start_command(client: Client, message: Message):
@@ -169,12 +185,10 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-
-    [
+                [
                     InlineKeyboardButton(" ⚡️ About Me", callback_data = "about"),
                     InlineKeyboardButton(' 👩‍💻 Dev', url='https://t.me/actanibot?start=start')
-
-    ]
+                ]
             ]
         )
         await message.reply_photo(
@@ -186,57 +200,44 @@ async def start_command(client: Client, message: Message):
                 mention=message.from_user.mention,
                 id=message.from_user.id
             ),
-            reply_markup=reply_markup#,
-            #message_effect_id=5104841245755180586  # 🔥
+            reply_markup=reply_markup
         )
         return
 
-
-
 #=====================================================================================##
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
 
 @Bot.on_message(filters.command('start') & filters.private)
 async def not_joined(client: Client, message: Message):
-    # Initialize buttons list
     buttons = []
 
-    # Check if the first and second channels are both set
     if FORCE_SUB_CHANNEL1 and FORCE_SUB_CHANNEL2:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink1),
             InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink2),
         ])
-    # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL1:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink1)
         ])
-    # Check if only the second channel is set
     elif FORCE_SUB_CHANNEL2:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink2)
         ])
 
-    # Check if the third and fourth channels are set
     if FORCE_SUB_CHANNEL3 and FORCE_SUB_CHANNEL4:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink3),
             InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink4),
         ])
-    # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL3:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink3)
         ])
-    # Check if only the second channel is set
     elif FORCE_SUB_CHANNEL4:
         buttons.append([
             InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink4)
         ])
 
-    # Append "Try Again" button if the command has a second argument
     try:
         buttons.append([
             InlineKeyboardButton(
@@ -245,21 +246,19 @@ async def not_joined(client: Client, message: Message):
             )
         ])
     except IndexError:
-        pass  # Ignore if no second argument is present
+        pass
 
     await message.reply_photo(
         photo=FORCE_PIC,
         caption=FORCE_MSG.format(
-        first=message.from_user.first_name,
-        last=message.from_user.last_name,
-        username=None if not message.from_user.username else '@' + message.from_user.username,
-        mention=message.from_user.mention,
-        id=message.from_user.id
-    ),
-    reply_markup=InlineKeyboardMarkup(buttons)#,
-    #message_effect_id=5104841245755180586  # Add the effect ID here
-)
-
+            first=message.from_user.first_name,
+            last=message.from_user.last_name,
+            username=None if not message.from_user.username else '@' + message.from_user.username,
+            mention=message.from_user.mention,
+            id=message.from_user.id
+        ),
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
 
 #=====================================================================================##
 
@@ -268,7 +267,6 @@ WAIT_MSG = "<b>လုပ်ဆောင်နေပါသည်...</b>"
 REPLY_ERROR = "<code>Use this command as a reply to any telegram message without any spaces.</code>"
 
 #=====================================================================================##
-
 
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
