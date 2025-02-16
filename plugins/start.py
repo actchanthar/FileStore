@@ -65,10 +65,12 @@ async def start_command(client: Client, message: Message):
             if not verify_status['is_verified']:
                 token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
                 await update_verify_status(id, verify_token=token, link="")
-                link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
+    link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f"https://telegram.dog/{client.username}?start=verify_{token}")
+    if not link or "403" in link or "Error" in link:
+        link = f"https://telegram.dog/{client.username}?start=verify_{token}"
                 btn = [
-                    [InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ •", url=link)],
-                    [InlineKeyboardButton('• ʜᴏᴡ ᴛᴏ ᴏᴘᴇɴ ʟɪɴᴋ •', url=TUT_VID)]
+                    [InlineKeyboardButton("â€¢ á´á´˜á´‡É´ ÊŸÉªÉ´á´‹ â€¢", url=link)],
+                    [InlineKeyboardButton('â€¢ Êœá´á´¡ á´›á´ á´á´˜á´‡É´ ÊŸÉªÉ´á´‹ â€¢', url=TUT_VID)]
                 ]
                 return await message.reply(
                     f"<b>Your token has expired. Please refresh your token to continue.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. Passing one ad allows you to use the bot for {get_exp_time(VERIFY_EXPIRE)}</b>",
@@ -138,7 +140,7 @@ async def start_command(client: Client, message: Message):
 
         if FILE_AUTO_DELETE > 0:
             notification_msg = await message.reply(
-                f"<b> This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော ၁-မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထားပါ။ </b>"
+                f"<b> This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\ná€‡á€¬á€á€ºá€€á€¬á€¸á€™á€»á€¬á€¸á€žá€Šá€º á€žá€á€ºá€™á€¾á€á€ºá€‘á€¬á€¸á€žá€±á€¬ á-á€™á€­á€”á€…á€ºá€¡á€á€½á€„á€ºá€¸á€•á€¼á€”á€ºá€–á€»á€€á€ºá€•á€«á€™á€Šá€ºá‹ á€‘á€­á€¯á€·á€€á€¼á€±á€¬á€„á€·á€º á€‡á€¬á€á€ºá€€á€¬á€¸á€™á€»á€¬á€¸á€€á€­á€¯ Save Folder á€‘á€²á€¡á€™á€¼á€”á€ºá€‘á€¬á€¸á€•á€«á‹ </b>"
             )
 
             await asyncio.sleep(FILE_AUTO_DELETE)
@@ -161,7 +163,7 @@ async def start_command(client: Client, message: Message):
                 ) if reload_url else None
 
                 await notification_msg.edit(
-                    "<b> ဗွီဒီယိုများကိုဖျက်လိုက်ပါပြီ ပြန်ကြည့်ရန် Get File Again ကိုနှိပ်ပါ ။\n\n ဇာတ်ကားများမဖျက်ခင် Save Folder ထဲကိုပို့ထားပါ သို့မဟုတ် တစ်စုံတစ်ယောက်ကိုပို့ထားပါ။</b>",
+                    "<b> á€—á€½á€®á€’á€®á€šá€­á€¯á€™á€»á€¬á€¸á€€á€­á€¯á€–á€»á€€á€ºá€œá€­á€¯á€€á€ºá€•á€«á€•á€¼á€® á€•á€¼á€”á€ºá€€á€¼á€Šá€·á€ºá€›á€”á€º Get File Again á€€á€­á€¯á€”á€¾á€­á€•á€ºá€•á€« á‹\n\n á€‡á€¬á€á€ºá€€á€¬á€¸á€™á€»á€¬á€¸á€™á€–á€»á€€á€ºá€á€„á€º Save Folder á€‘á€²á€€á€­á€¯á€•á€­á€¯á€·á€‘á€¬á€¸á€•á€« á€žá€­á€¯á€·á€™á€Ÿá€¯á€á€º á€á€…á€ºá€…á€¯á€¶á€á€…á€ºá€šá€±á€¬á€€á€ºá€€á€­á€¯á€•á€­á€¯á€·á€‘á€¬á€¸á€•á€«á‹</b>",
                     reply_markup=keyboard
                 )
             except Exception as e:
@@ -170,8 +172,8 @@ async def start_command(client: Client, message: Message):
         reply_markup = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(" ⚡️ About Me", callback_data = "about"),
-                    InlineKeyboardButton(' 👩‍💻 Dev', url='https://t.me/actanibot?start=start')
+                    InlineKeyboardButton(" âš¡ï¸ About Me", callback_data = "about"),
+                    InlineKeyboardButton(' ðŸ‘©â€ðŸ’» Dev', url='https://t.me/actanibot?start=start')
                 ]
             ]
         )
@@ -200,42 +202,42 @@ async def not_joined(client: Client, message: Message):
     # Check if the first and second channels are both set
     if FORCE_SUB_CHANNEL1 and FORCE_SUB_CHANNEL2:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink1),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink2),
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸ", url=client.invitelink1),
+            InlineKeyboardButton(text="á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸ â€¢", url=client.invitelink2),
         ])
     # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL1:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink1)
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸâ€¢", url=client.invitelink1)
         ])
     # Check if only the second channel is set
     elif FORCE_SUB_CHANNEL2:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink2)
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸâ€¢", url=client.invitelink2)
         ])
 
     # Check if the third and fourth channels are set
     if FORCE_SUB_CHANNEL3 and FORCE_SUB_CHANNEL4:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink3),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink4),
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸ", url=client.invitelink3),
+            InlineKeyboardButton(text="á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸ â€¢", url=client.invitelink4),
         ])
     # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL3:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink3)
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸâ€¢", url=client.invitelink3)
         ])
     # Check if only the second channel is set
     elif FORCE_SUB_CHANNEL4:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink4)
+            InlineKeyboardButton(text="â€¢ á´Šá´ÉªÉ´ á´„Êœá´€É´É´á´‡ÊŸâ€¢", url=client.invitelink4)
         ])
 
     # Append "Try Again" button if the command has a second argument
     try:
         buttons.append([
             InlineKeyboardButton(
-                text="ʀᴇʟᴏᴀᴅ",
+                text="Ê€á´‡ÊŸá´á´€á´…",
                 url=f"https://t.me/{client.username}?start={message.command[1]}"
             )
         ])
@@ -256,7 +258,7 @@ async def not_joined(client: Client, message: Message):
 
 #=====================================================================================##
 
-WAIT_MSG = "<b>လုပ်ဆောင်နေပါသည်...</b>"
+WAIT_MSG = "<b>á€œá€¯á€•á€ºá€†á€±á€¬á€„á€ºá€”á€±á€•á€«á€žá€Šá€º...</b>"
 
 REPLY_ERROR = "<code>Use this command as a reply to any telegram message without any spaces.</code>"
 
@@ -279,7 +281,7 @@ async def send_text(client: Bot, message: Message):
         deleted = 0
         unsuccessful = 0
 
-        pls_wait = await message.reply("<i>ʙʀᴏᴀᴅᴄᴀꜱᴛ ᴘʀᴏᴄᴇꜱꜱɪɴɢ....</i>")
+        pls_wait = await message.reply("<i>Ê™Ê€á´á´€á´…á´„á´€êœ±á´› á´˜Ê€á´á´„á´‡êœ±êœ±ÉªÉ´É¢....</i>")
         for chat_id in query:
             try:
                 await broadcast_msg.copy(chat_id)
@@ -299,7 +301,7 @@ async def send_text(client: Bot, message: Message):
                 pass
             total += 1
 
-        status = f"""<b><u>ʙʀᴏᴀᴅᴄᴀꜱᴛ...</u>
+        status = f"""<b><u>Ê™Ê€á´á´€á´…á´„á´€êœ±á´›...</u>
 
 Total Users: <code>{total}</code>
 Successful: <code>{successful}</code>
