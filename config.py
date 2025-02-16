@@ -45,9 +45,9 @@ FORCE_PIC = os.environ.get("FORCE_PIC", "https://i.imghippo.com/files/fgmj5944fE
 
 # Turn this feature on or off using True or False put value inside  ""
 # TRUE for yes FALSE if no 
-TOKEN = True if os.environ.get('TOKEN', "False") == "True" else False 
+TOKEN = True if os.environ.get('TOKEN', "True") == "True" else False 
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "ouo.io")
-SHORTLINK_API = os.environ.get("SHORTLINK_API", "Y400jCYn")
+SHORTLINK_API = os.environ.get("SHORTLINK_API", "Y4OOjCYn")
 VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', 600)) # Add time in seconds
 IS_VERIFY = os.environ.get("IS_VERIFY", "True")
 TUT_VID = os.environ.get("TUT_VID","https://t.me/actanimemm/3")
