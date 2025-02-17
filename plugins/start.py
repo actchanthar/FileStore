@@ -72,7 +72,7 @@ async def start_command(client: Client, message: Message):
                 if verify_status["link"] == "":
                     reply_markup = None
                 return await message.reply(
-                    f"Your token has been successfully verified and is valid for {get_exp_time(VERIFY_EXPIRE)}",
+                    f"Bot ကိုအသုံးပြုနိုင်စွမ်းကို အောင်မြင်စွာရယူပြီးပါပြီ အချိန် {get_exp_time(VERIFY_EXPIRE)} အတွင်း အသုံးပြုနိုင်းစွမ်းပြန်ရယူရမည်။",
                     reply_markup=reply_markup,
                     protect_content=False,
                     quote=True
@@ -87,7 +87,7 @@ async def start_command(client: Client, message: Message):
                     [InlineKeyboardButton('• ʜᴏᴡ ᴛᴏ ᴏᴘᴇɴ ʟɪɴᴋ •', url=TUT_VID)]
                 ]
                 return await message.reply(
-                    f"<b>Your token has expired. Please refresh your token to continue.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. Passing one ad allows you to use the bot for {get_exp_time(VERIFY_EXPIRE)}</b>",
+                    f"<b>Bot ကိုသုံးနိုင်စွမ်း အချိန်ပြည့်သွားပါပြီဗျ!! Bot သုံးနိုင်စွမ်း\n\n : {get_exp_time(VERIFY_EXPIRE)}\n\ရယူရန် Open Link ကိုနှိပ်ပါ ၊ ထို့နောက် မလုပ်တတ်ရင် How TO OPEN LINK ကိုနှိပ်ပါ။ Bot အသုံးပြုနိုင်စွမ်း{get_exp_time(VERIFY_EXPIRE)}</b>",
                     reply_markup=InlineKeyboardMarkup(btn),
                     protect_content=False,
                     quote=True
