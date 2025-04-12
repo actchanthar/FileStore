@@ -268,7 +268,7 @@ async def not_joined(client: Client, message: Message):
     try:
         buttons.append([
             InlineKeyboardButton(
-                text="ʀᴇʟᴏᴀᴅ",
+                text="RELOAD ဇာတ်ကားရယူရန်",
                 url=f"https://t.me/{client.username}?start={message.command[1]}"
             )
         ])
