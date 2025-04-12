@@ -233,8 +233,8 @@ async def not_joined(client: Client, message: Message):
     # Check if the first and second channels are both set
     if FORCE_SUB_CHANNEL1 and FORCE_SUB_CHANNEL2:
         buttons.append([
-            InlineKeyboardButton(text="•ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ", url=client.invitelink1),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink2),
+            InlineKeyboardButton(text="•𝗝𝗼𝗶𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ဝင်ပါ 1 ", url=client.invitelink1),
+            InlineKeyboardButton(text="𝗝𝗼𝗶𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ဝင်ပါ 2•", url=client.invitelink2),
         ])
     # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL1:
@@ -250,8 +250,8 @@ async def not_joined(client: Client, message: Message):
     # Check if the third and fourth channels are set
     if FORCE_SUB_CHANNEL3 and FORCE_SUB_CHANNEL4:
         buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink3),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink4),
+            InlineKeyboardButton(text="•𝗝𝗼𝗶𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ဝင်ပါ 3", url=client.invitelink3),
+            InlineKeyboardButton(text="𝗝𝗼𝗶𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ဝင်ပါ 4•", url=client.invitelink4),
         ])
     # Check if only the first channel is set
     elif FORCE_SUB_CHANNEL3:
