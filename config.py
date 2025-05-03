@@ -1,3 +1,4 @@
+# config.py
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
 # Ask Doubt on telegram @CodeflixSupport
 #
@@ -54,7 +55,7 @@ HELP_TXT = "<b><blockquote>ᴛʜɪs ɪs ᴀɴ ғɪʟᴇ Store @actanimemm\n\n❏
 ABOUT_TXT = "<b><blockquote>◈ ᴄʀᴇᴀᴛᴏʀ: <a href=https://t.me/actanibot>ACT</a>\n◈ ꜰᴏᴜɴᴅᴇʀ ᴏꜰ : <a href=https://t.me/actanimemm>ACT Anime MM</a>\n◈ ᴀɴɪᴍᴇ ᴄʜᴀɴɴᴇʟ : <a href=https://t.me/actanimemm>ᴀɴɪᴍᴇ ᴄʀᴜɪsᴇ</a>\n◈ Hentai Channel: <a href=https://t.me/+v9h86AMQ5dowYWFl> Hentai</a>\n◈ ᴀᴅᴜʟᴛ ᴍᴀɴʜᴡᴀ : <a href=https://t.me/hentai_manhwammsub>ᴘᴏʀɴʜᴡᴀs</a>\n◈ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href=https://t.me/actanibot>ACT</a></blockquote></b>"
 
 # Messages
-START_MSG = os.environ.get("START_MESSAGE", "<b>ʜᴇʟʟᴏ {first}\n\n<blockquote> Video / File သိမ်းပြီးပြန်ပို့တဲ့ bot ပါ�।</blockquote></b>")
+START_MSG = os.environ.get("START_MESSAGE", "<b>ʜᴇʟʟᴏ {first}\n\n<blockquote> Video / File သိမ်းပြီးပြန်ပို့တဲ့ bot ပါ।</blockquote></b>")
 FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b> Brother အောက်ကချာနယ် အရင်ဝင်ပါ ပြီးမှ ဝင်ပြီးရင် Reload ကိုနှိပ်ပါ အရင်မဝင်ဘဲမနှိပ်ပါနဲ့ ဖိုင်မရပါဘူး.</b>")
 
 # Admin commands
