@@ -1,28 +1,15 @@
-# plugins/start.py
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 import asyncio
 import os
 import random
 import sys
 import time
-import string
 from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode, ChatAction
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
+from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated, UserNotParticipant
 from bot import Bot
 from config import *
 from helper_func import *
@@ -44,72 +31,20 @@ async def start_command(client: Client, message: Message):
                 [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
             )
         )
-
-    # Check if user is an admin (bypass verification)
-    if user_id in ADMINS:
-        verify_status = {
-            'is_verified': True,
-            'verify_token': None,
-            'verified_time': time.time(),
-            'link': ""
-        }
-    else:
-        verify_status = await get_verify_status(user_id)
-
-        # Handle token verification if TOKEN is enabled
-        if TOKEN:
-            # Check if verification has expired
-            if verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
-                await update_verify_status(user_id, is_verified=False, verify_token="", link="")
-
-            # Handle token verification
-            if "verify_" in message.text:
-                try:
-                    _, token = message.text.split("_", 1)
-                    if verify_status['verify_token'] != token:
-                        return await message.reply("Your token is invalid or expired. Try again by clicking /start.")
-                    await update_verify_status(user_id, is_verified=True, verified_time=time.time(), verify_token="", link="")
-                    return await message.reply(
-                        f"Bot ကိုအသုံးပြုနိုင်စွမ်းကို အောင်မြင်စွာရယူပြီးပါပြီ အချိန် {get_exp_time(VERIFY_EXPIRE)} အတွင်း၊ အချိန်ပြည့်သွားရင် Botအသုံးပြုနိုင်းစွမ်းပြန်ရယူရပါမည်။",
-                        protect_content=False,
-                        quote=True
-                    )
-                except Exception as e:
-                    print(f"Error processing token: {e}")
-                    return await message.reply("Invalid token format. Please try again with /start.")
-
-            # If not verified, generate a new token and shortlink
-            if not verify_status['is_verified']:
-                token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-                await update_verify_status(user_id, is_verified=False, verify_token=token, link="")
-                verification_url = f'https://telegram.dog/{client.username}?start=verify_{token}'
-                shortlink = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, verification_url)
-                btn = [
-                    [InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ •", url=shortlink)],
-                    [InlineKeyboardButton("• ᴛᴜᴛᴏʀɪᴀʟ အသုံးပြုနည်း •", url=TUT_VID)]
-                ]
-                return await message.reply(
-                    f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱 𝗼𝗿 𝗶𝘀 𝗻𝗼𝘁 𝘃𝗲𝗿𝗶𝗳𝗶𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝘃𝗲�_rify 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲.\n\n"
-                    f"<b>Bot သုံးနိုင်စွမ်း ရယူရန် Open Link ကိုနှိပ်ပါ။ မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။\n"
-                    f"Verification valid for: {get_exp_time(VERIFY_EXPIRE)}</b>",
-                    reply_markup=InlineKeyboardMarkup(btn),
-                    protect_content=False,
-                    quote=True
-                )
-
-    # Check Force Subscription
+    # ✅ Check Force Subscription
     if not await is_subscribed(client, user_id):
+        #await temp.delete()
         return await not_joined(client, message)
+
+    # File auto-delete time in seconds (Set your desired time in seconds here)
+    FILE_AUTO_DELETE = await db.get_del_timer()  # Example: 3600 seconds (1 hour)
 
     # Add user if not already present
     if not await db.present_user(user_id):
         try:
             await db.add_user(user_id)
-        except Exception as e:
-            print(f"Error adding user: {e}")
-
-    # File auto-delete time
-    FILE_AUTO_DELETE = await db.get_del_timer()
+        except:
+            pass
 
     # Handle normal message flow
     text = message.text
@@ -151,19 +86,19 @@ async def start_command(client: Client, message: Message):
 
         codeflix_msgs = []
         for msg in messages:
-            caption = (CUSTOM_CAPTION.format(previouscaption="" if not msg.caption else msg.caption.html,
+            caption = (CUSTOM_CAPTION.format(previouscaption="" if not msg.caption else msg.caption.html, 
                                              filename=msg.document.file_name) if bool(CUSTOM_CAPTION) and bool(msg.document)
                        else ("" if not msg.caption else msg.caption.html))
 
             reply_markup = msg.reply_markup if DISABLE_CHANNEL_BUTTON else None
 
             try:
-                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, 
                                             reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
                 codeflix_msgs.append(copied_msg)
             except FloodWait as e:
                 await asyncio.sleep(e.x)
-                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, 
                                             reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
                 codeflix_msgs.append(copied_msg)
             except Exception as e:
@@ -172,15 +107,15 @@ async def start_command(client: Client, message: Message):
 
         if FILE_AUTO_DELETE > 0:
             notification_msg = await message.reply(
-                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော {get_exp_time(FILE_AUTO_DELETE)} မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
+                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in.{get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော  {get_exp_time(FILE_AUTO_DELETE)}  မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
             )
 
             await asyncio.sleep(FILE_AUTO_DELETE)
 
-            for snt_msg in codeflix_msgs:
+            for snt_msg in codeflix_msgs:    
                 if snt_msg:
-                    try:
-                        await snt_msg.delete()
+                    try:    
+                        await snt_msg.delete()  
                     except Exception as e:
                         print(f"Error deleting message {snt_msg.id}: {e}")
 
@@ -195,7 +130,7 @@ async def start_command(client: Client, message: Message):
                 ) if reload_url else None
 
                 await notification_msg.edit(
-                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇  ဗွီဒီယိုများကိုဖျက်လိုက်ပါပြီ ပြန်ကြည့်ရန် Get File Again ပြန်ယူရန် ကိုနှိပ်ပါ ။\n\n ဇာတ်ကားများမဖျက်ခင် Save Folder ထဲကိုပို့ထားပါ သို့မဟုတ် တစ်စုံတစ်ယောက်ကိုပို့ထားပါ।</b>",
+                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇  ဗွီဒီယိုများကိုဖျက်လိုက်ပါပြီ ပြန်ကြည့်ရန် Get File Again ပြန်ယူရန် ကိုနှိပ်ပါ ။\n\n ဇာတ်ကားများမဖျက်ခင် Save Folder ထဲကိုပို့ထားပါ သို့မဟုတ် တစ်စုံတစ်ယောက်ကိုပို့ထားပါ။</b>",
                     reply_markup=keyboard
                 )
             except Exception as e:
@@ -203,11 +138,13 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/Nova_Flix/50")],
-                [
-                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
-                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data="help")
-                ]
+                    [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/Nova_Flix/50")],
+
+    [
+                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data = "about"),
+                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data = "help")
+
+    ]
             ]
         )
         await message.reply_photo(
@@ -220,9 +157,17 @@ async def start_command(client: Client, message: Message):
                 id=message.from_user.id
             ),
             reply_markup=reply_markup,
-            message_effect_id=5104841245755180586
-        )
+            message_effect_id=5104841245755180586)  # 🔥
+        
         return
+
+
+
+#=====================================================================================##
+# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
+# Ask Doubt on telegram @CodeflixSupport
+
+
 
 # Create a global dictionary to store chat data
 chat_data_cache = {}
@@ -235,14 +180,15 @@ async def not_joined(client: Client, message: Message):
     count = 0
 
     try:
-        all_channels = await db.show_channels()
+        all_channels = await db.show_channels()  # Should return list of (chat_id, mode) tuples
         for total, chat_id in enumerate(all_channels, start=1):
-            mode = await db.get_channel_mode(chat_id)
+            mode = await db.get_channel_mode(chat_id)  # fetch mode 
 
             await message.reply_chat_action(ChatAction.TYPING)
 
             if not await is_sub(client, user_id, chat_id):
                 try:
+                    # Cache chat info
                     if chat_id in chat_data_cache:
                         data = chat_data_cache[chat_id]
                     else:
@@ -251,21 +197,22 @@ async def not_joined(client: Client, message: Message):
 
                     name = data.title
 
+                    # Generate proper invite link based on the mode
                     if mode == "on" and not data.username:
                         invite = await client.create_chat_invite_link(
                             chat_id=chat_id,
                             creates_join_request=True,
                             expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
-                        )
+                            )
                         link = invite.invite_link
+
                     else:
                         if data.username:
                             link = f"https://t.me/{data.username}"
                         else:
                             invite = await client.create_chat_invite_link(
                                 chat_id=chat_id,
-                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
-                            )
+                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None)
                             link = invite.invite_link
 
                     buttons.append([InlineKeyboardButton(text=name, url=link)])
@@ -279,6 +226,7 @@ async def not_joined(client: Client, message: Message):
                         f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
                     )
 
+        # Retry Button
         try:
             buttons.append([
                 InlineKeyboardButton(
@@ -308,7 +256,9 @@ async def not_joined(client: Client, message: Message):
             f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
         )
 
-@Bot.on_message(filters.command('commands') & filters.private & filters.user(ADMINS))
-async def bcmd(bot: Bot, message: Message):
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data="close")]])
-    await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
+#=====================================================================================##
+
+@Bot.on_message(filters.command('commands') & filters.private & admin)
+async def bcmd(bot: Bot, message: Message):        
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data = "close")]])
+    await message.reply(text=CMD_TXT, reply_markup = reply_markup, quote= True)
