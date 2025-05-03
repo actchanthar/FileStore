@@ -47,6 +47,11 @@ async def req_user_exist(chat_id, user_id):
     request = await db.join_requests.find_one({"chat_id": chat_id, "user_id": user_id})
     return bool(request)
 
+async def reqChannel_exist(chat_id):
+    """Check if a channel exists in the force-sub list."""
+    channel = await db.channels.find_one({"chat_id": chat_id})
+    return bool(channel)
+
 async def admin_exist(user_id):
     """Check if a user is an admin."""
     admin = await db.admins.find_one({"user_id": user_id})
