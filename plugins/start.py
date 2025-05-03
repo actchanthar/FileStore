@@ -10,103 +10,493 @@
 # All rights reserved.
 #
 
+import asyncio
 import os
-from os import environ, getenv
-import logging
-from logging.handlers import RotatingFileHandler
+import random
+import sys
+import time
+import string
+from datetime import datetime, timedelta
+from pyrogram import Client, filters, __version__
+from pyrogram.enums import ParseMode, ChatAction
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
+from bot import Bot
+from config import *
+from helper_func import *
+from database.database import *
 
-# Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8154426339")
-APP_ID = int(os.environ.get("APP_ID", "25255650"))  # Your API ID from my.telegram.org
-API_HASH = os.environ.get("API_HASH", "8eeadfa8f9b832d18657a63585b75bc0")  # Your API Hash from my.telegram.org
+BAN_SUPPORT = f"{BAN_SUPPORT}"
 
-# Database channel ID
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002143185747"))  # Your db channel Id
-OWNER = os.environ.get("OWNER", "When_the_night_falls_my_soul_se")  # Owner username without @
-OWNER_ID = int(os.environ.get("OWNER_ID", "5062124930"))  # Owner id
+@Bot.on_message(filters.command('start') & filters.private)
+async def start_command(client: Client, message: Message):
+    user_id = message.from_user.id
 
-# Port
-PORT = os.environ.get("PORT", "8001")
+    # Check if user is banned
+    banned_users = await db.get_ban_users()
+    if user_id in banned_users:
+        return await message.reply_text(
+            "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
+            "<i>Contact support @actanibot if you think this is a mistake.</i>",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
+            )
+        )
 
-# Database
-DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://act23:act23@cluster0.x1lrbcd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = os.environ.get("DATABASE_NAME", "actshare")
+    # Check if user is an admin (bypass verification)
+    if user_id in ADMINS:
+        verify_status = {
+            'is_verified': True,
+            'verify_token': None,
+            'verified_time': time.time(),
+            'link': ""
+        }
+    else:
+        verify_status = await get_verify_status(user_id)
 
-# Force subscription link expiry
-FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "10"))  # 0 means no expiry
-BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/stranger77777777777")
-TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "200"))
+        # Handle token verification if TOKEN is enabled
+        if TOKEN:
+            # Check if verification has expired
+            if verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
+                await update_verify_status(user_id, is_verified=False, verify_token="", link="")
 
-# Images
-START_PIC = os.environ.get("START_PIC", "https://i.imghippo.com/files/fgmj5944fE.jpg")
-FORCE_PIC = os.environ.get("FORCE_PIC", "https://i.imghippo.com/files/ZtkE2660GE.jpg")
+            # Handle token verification
+            if "verify_" in message.text:
+                try:
+                    _, token = message.text.split("_", 1)
+                    if verify_status['verify_token'] != token:
+                        return await message.reply("Your token is invalid or expired. Try again by clicking /start.")
+                    await update_verify_status(user_id, is_verified=True, verified_time=time.time(), verify_token="", link="")
+                    return await message.reply(
+                        f"Bot ကိုအသုံးပြုနိုင်စွမ်းကို အောင်မြင်စွာရယူပြီးပါပြီ အချိန် {get_exp_time(VERIFY_EXPIRE)} အတွင်း၊ အချိန်ပြည့်သွားရင် Botအသုံးပြုနိုင်းစွမ်းပြန်ရယူရပါမည်။",
+                        protect_content=False,
+                        quote=True
+                    )
+                except Exception as e:
+                    print(f"Error processing token: {e}")
+                    return await message.reply("Invalid token format. Please try again with /start.")
 
-# Token verification settings
-TOKEN = True  # Enable token verification
-SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "ouo.io")  # Shortlink service URL
-SHORTLINK_API = os.environ.get("SHORTLINK_API", "YOUR_OUO_IO_API_KEY")  # Replace with your ouo.io API key
-VERIFY_EXPIRE = int(os.environ.get("VERIFY_EXPIRE", "600"))  # Token expiry time in seconds (e.g., 600 = 10 minutes)
-TUT_VID = os.environ.get("TUT_VID", "https://t.me/actanimemm/3")  # Tutorial video link
+            # If not verified, generate a new token and shortlink
+            if not verify_status['is_verified']:
+                token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+                await update_verify_status(user_id, is_verified=False, verify_token=token, link="")
+                verification_url = f'https://telegram.dog/{client.username}?start=verify_{token}'
+                shortlink = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, verification_url)
+                btn = [
+                    [InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ •", url=shortlink)],
+                    [InlineKeyboardButton("• ᴛᴜᴛᴏʀɪᴀʟ အသုံးပြုနည်း •", url=TUT_VID)]
+                ]
+                return await message.reply(
+                    f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱 𝗼𝗿 𝗶𝘀 𝗻𝗼𝘁 𝘃𝗲𝗿𝗶𝗳𝗶𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝘃𝗲𝗿𝗶𝗳𝘆 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲.\n\n"
+                    f"<b>Bot သုံးနိုင်စွမ်း ရယူရန် Open Link ကိုနှိပ်ပါ။ မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။\n"
+                    f"Verification valid for: {get_exp_time(VERIFY_EXPIRE)}</b>",
+                    reply_markup=InlineKeyboardMarkup(btn),
+                    protect_content=False,
+                    quote=True
+                )
 
-# Help and About text
-HELP_TXT = "<b><blockquote>ᴛʜɪs ɪs ᴀɴ ғɪʟᴇ Store @actanimemm\n\n❏ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs\n├/start : sᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ\n├/about : ᴏᴜʀ Iɴғᴏʀᴍᴀᴛɪᴏɴ\n└/help : ʜᴇʟᴘ ʀᴇʟᴀᴛᴇᴅ ʙᴏᴛ\n\n sɪᴍᴘʟʏ ᴄʟɪᴄᴋ ᴏɴ ʟɪɴᴋ ᴀɴᴅ sᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴛʜᴀᴛs ɪᴛ.....!\n\n ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ <a href=https://t.me/actanibot>ACT</a></blockquote></b>"
+    # Check Force Subscription
+    if not await is_subscribed(client, user_id):
+        return await not_joined(client, message)
 
-ABOUT_TXT = "<b><blockquote>◈ ᴄʀᴇᴀᴛᴏʀ: <a href=https://t.me/actanibot>ACT</a>\n◈ ꜰᴏᴜɴᴅᴇʀ ᴏꜰ : <a href=https://t.me/actanimemm>ACT Anime MM</a>\n◈ ᴀɴɪᴍᴇ ᴄʜᴀɴɴᴇʟ : <a href=https://t.me/actanimemm>ᴀɴɪᴍᴇ ᴄʀᴜɪsᴇ</a>\n◈ Hentai Channel: <a href=https://t.me/+v9h86AMQ5dowYWFl> Hentai</a>\n◈ ᴀᴅᴜʟᴛ ᴍᴀɴʜᴡᴀ : <a href=https://t.me/hentai_manhwammsub>ᴘᴏʀɴʜᴡᴀs</a>\n◈ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href=https://t.me/actanibot>ACT</a></blockquote></b>"
+    # Add user if not already present
+    if not await db.present_user(user_id):
+        try:
+            await db.add_user(user_id)
+        except Exception as e:
+            print(f"Error adding user: {e}")
 
-# Messages
-START_MSG = os.environ.get("START_MESSAGE", "<b>ʜᴇʟʟᴏ {first}\n\n<blockquote> Video / File သိမ်းပြီးပြန်ပို့တဲ့ bot ပါ။</blockquote></b>")
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b> Brother အောက်ကချာနယ် အရင်ဝင်ပါ ပြီးမှ ဝင်ပြီးရင် Reload ကိုနှိပ်ပါ အရင်မဝင်ဘဲမနှိပ်ပါနဲ့ ဖိုင်မရပါဘူး.</b>")
+    # File auto-delete time
+    FILE_AUTO_DELETE = await db.get_del_timer()
 
-# Admin commands
-CMD_TXT = """<blockquote><b>» ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs:</b></blockquote>
+    # Handle normal message flow
+    text = message.text
+    if len(text) > 7:
+        try:
+            base64_string = text.split(" ", 1)[1]
+        except IndexError:
+            return
 
-<b>›› /dlt_time :</b> sᴇᴛ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴛɪᴍᴇ
-<b>›› /check_dlt_time :</b> ᴄʜᴇᴄᴋ ᴄᴜʀʀᴇɴᴛ ᴅᴇʟᴇᴛᴇ ᴛɪᴍᴇ
-<b>›› /dbroadcast :</b> ʙʀᴏᴀᴅᴄᴀsᴛ ᴅᴏᴄᴜᴍᴇɴᴛ / ᴠɪᴅᴇᴏ
-<b>›› /ban :</b> ʙᴀɴ ᴀ ᴜꜱᴇʀ
-<b>›› /unban :</b> ᴜɴʙᴀɴ ᴀ ᴜꜱᴇʀ
-<b>›› /banlist :</b> ɢᴇᴛ ʟɪsᴛ ᴏꜰ ʙᴀɴɴᴇᴅ ᴜꜱᴇʀs
-<b>›› /addchnl :</b> ᴀᴅᴅ ꜰᴏʀᴄᴇ sᴜʙ ᴄʜᴀɴɴᴇʟ
-<b>›› /delchnl :</b> ʀᴇᴍᴏᴠᴇ ꜰᴏʀᴄᴇ sᴜʙ ᴄʜᴀɴɴᴇʟ
-<b>›› /listchnl :</b> ᴠɪᴇᴡ ᴀᴅᴅᴇᴅ ᴄʜᴀɴɴᴇʟs
-<b>›› /fsub_mode :</b> ᴛᴏɢɢʟᴇ ꜰᴏʀᴄᴇ sᴜʙ ᴍᴏᴅᴇ
-<b>›› /pbroadcast :</b> sᴇɴᴅ ᴘʜᴏᴛᴏ ᴛᴏ ᴀʟʟ ᴜꜱᴇʀs
-<b>›› /add_admin :</b> ᴀᴅᴅ ᴀɴ ᴀᴅᴍɪɴ
-<b>›› /deladmin :</b> ʀᴇᴍᴏᴠᴇ ᴀɴ ᴀᴅᴍɪɴ
-<b>›› /admins :</b> ɢᴇᴛ ʟɪsᴛ ᴏꜰ ᴀᴅᴍɪɴs
-"""
+        string = await decode(base64_string)
+        argument = string.split("-")
 
-# Custom caption and content protection
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ @actanibot</b>")
-PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
+        ids = []
+        if len(argument) == 3:
+            try:
+                start = int(int(argument[1]) / abs(client.db_channel.id))
+                end = int(int(argument[2]) / abs(client.db_channel.id))
+                ids = range(start, end + 1) if start <= end else list(range(start, end - 1, -1))
+            except Exception as e:
+                print(f"Error decoding IDs: {e}")
+                return
 
-# Disable channel button
-DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True'
+        elif len(argument) == 2:
+            try:
+                ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+            except Exception as e:
+                print(f"Error decoding ID: {e}")
+                return
 
-# Bot stats and user reply text
-BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
-USER_REPLY_TEXT = " Bot ကိုတိုက်ရိုက်စာပို့လို့မရပါဘူး ကြော်ငြာကိစ္စစုံစမ်းလို့ပါက or Paid promotion @actanibot"
+        temp_msg = await message.reply("<b>Please wait...</b>")
+        try:
+            messages = await get_messages(client, ids)
+        except Exception as e:
+            await message.reply_text("Something went wrong!")
+            print(f"Error getting messages: {e}")
+            return
+        finally:
+            await temp_msg.delete()
 
-# Admins
-ADMINS = [5062124930]  # Add admin IDs here (e.g., OWNER_ID and others)
+        codeflix_msgs = []
+        for msg in messages:
+            caption = (CUSTOM_CAPTION.format(previouscaption="" if not msg.caption else msg.caption.html,
+                                             filename=msg.document.file_name) if bool(CUSTOM_CAPTION) and bool(msg.document)
+                       else ("" if not msg.caption else msg.caption.html))
 
-# Logging
-LOG_FILE_NAME = "filesharingbot.txt"
+            reply_markup = msg.reply_markup if DISABLE_CHANNEL_BUTTON else None
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s - %(levelname)s] - %(name)s - %(message)s",
-    datefmt='%d-%b-%y %H:%M:%S',
-    handlers=[
-        RotatingFileHandler(
-            LOG_FILE_NAME,
-            maxBytes=50000000,
-            backupCount=10
-        ),
-        logging.StreamHandler()
-    ]
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
+            try:
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                                            reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                codeflix_msgs.append(copied_msg)
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                                            reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                codeflix_msgs.append(copied_msg)
+            except Exception as e:
+                print(f"Failed to send message: {e}")
+                pass
 
-def LOGGER(name: str) -> logging.Logger:
-    return logging.getLogger(name)
+        if FILE_AUTO_DELETE > 0:
+            notification_msg = await message.reply(
+                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော {get_exp_time(FILE_AUTO_DELETE)} မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
+            )
+
+            await asyncio.sleep(FILE_AUTO_DELETE)
+
+            for snt_msg in codeflix_msgs:
+                if snt_msg:
+                    try:
+                        await snt_msg.delete()
+                   STP: If you want to enable token verification for all users, including those who have joined the required channels, you can modify the `start_command` in `start.py` to enforce token verification before checking the subscription status. Here's how you can adjust the logic:
+
+### Modified `start.py` with Token Verification Before Force Subscription
+
+This version ensures that token verification is mandatory for all non-admin users, even if they have joined the required channels. The force subscription check occurs only after successful token verification.
+
+```python
+# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
+# Ask Doubt on telegram @CodeflixSupport
+#
+# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
+#
+# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
+# and is released under the MIT License.
+# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
+#
+# All rights reserved.
+#
+
+import asyncio
+import os
+import random
+import sys
+import time
+import string
+from datetime import datetime, timedelta
+from pyrogram import Client, filters, __version__
+from pyrogram.enums import ParseMode, ChatAction
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
+from bot import Bot
+from config import *
+from helper_func import *
+from database.database import *
+
+BAN_SUPPORT = f"{BAN_SUPPORT}"
+
+@Bot.on_message(filters.command('start') & filters.private)
+async def start_command(client: Client, message: Message):
+    user_id = message.from_user.id
+
+    # Check if user is banned
+    banned_users = await db.get_ban_users()
+    if user_id in banned_users:
+        return await message.reply_text(
+            "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
+            "<i>Contact support @actanibot if you think this is a mistake.</i>",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
+            )
+        )
+
+    # Check if user is an admin (bypass verification)
+    if user_id in ADMINS:
+        verify_status = {
+            'is_verified': True,
+            'verify_token': None,
+            'verified_time': time.time(),
+            'link': ""
+        }
+    else:
+        verify_status = await get_verify_status(user_id)
+
+        # Handle token verification if TOKEN is enabled
+        if TOKEN:
+            # Check if verification has expired
+            if verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
+                await update_verify_status(user_id, is_verified=False, verify_token="", link="")
+
+            # Handle token verification
+            if "verify_" in message.text:
+                try:
+                    _, token = message.text.split("_", 1)
+                    if verify_status['verify_token'] != token:
+                        return await message.reply("Your token is invalid or expired. Try again by clicking /start.")
+                    await update_verify_status(user_id, is_verified=True, verified_time=time.time(), verify_token="", link="")
+                    return await message.reply(
+                        f"Bot ကိုအသုံးပြုနိုင်စွမ်းကို အောင်မြင်စွာရယူပြီးပါပြီ အချိန် {get_exp_time(VERIFY_EXPIRE)} အတွင်း၊ အချိန်ပြည့်သွားရင် Botအသုံးပြုနိုင်းစွမ်းပြန်ရယူရပါမည်။",
+                        protect_content=False,
+                        quote=True
+                    )
+                except Exception as e:
+                    print(f"Error processing token: {e}")
+                    return await message.reply("Invalid token format. Please try again with /start.")
+
+            # If not verified, generate a new token and shortlink
+            if not verify_status['is_verified']:
+                token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+                await update_verify_status(user_id, is_verified=False, verify_token=token, link="")
+                verification_url = f'https://telegram.dog/{client.username}?start=verify_{token}'
+                shortlink = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, verification_url)
+                btn = [
+                    [InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ •", url=shortlink)],
+                    [InlineKeyboardButton("• ᴛᴜᴛᴏʀɪᴀʟ အသုံးပြုနည်း •", url=TUT_VID)]
+                ]
+                return await message.reply(
+                    f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱 𝗼𝗿 𝗶𝘀 𝗻𝗼𝘁 𝘃𝗲�_rified. 𝗣𝗹𝗲𝗮𝘀𝗲 𝘃𝗲𝗿𝗶𝗳𝘆 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲.\n\n"
+                    f"<b>Bot သုံးနိုင်စွမ်း ရယူရန် Open Link ကိုနှိပ်ပါ။ မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။\n"
+                    f"Verification valid for: {get_exp_time(VERIFY_EXPIRE)}</b>",
+                    reply_markup=InlineKeyboardMarkup(btn),
+                    protect_content=False,
+                    quote=True
+                )
+
+    # Check Force Subscription only after token verification
+    if not await is_subscribed(client, user_id):
+        return await not_joined(client, message)
+
+    # Add user if not already present
+    if not await db.present_user(user_id):
+        try:
+            await db.add_user(user_id)
+        except Exception as e:
+            print(f"Error adding user: {e}")
+
+    # File auto-delete time
+    FILE_AUTO_DELETE = await db.get_del_timer()
+
+    # Handle normal message flow
+    text = message.text
+    if len(text) > 7:
+        try:
+            base64_string = text.split(" ", 1)[1]
+        except IndexError:
+            return
+
+        string = await decode(base64_string)
+        argument = string.split("-")
+
+        ids = []
+        if len(argument) == 3:
+            try:
+                start = int(int(argument[1]) / abs(client.db_channel.id))
+                end = int(int(argument[2]) / abs(client.db_channel.id))
+                ids = range(start, end + 1) if start <= end else list(range(start, end - 1, -1))
+            except Exception as e:
+                print(f"Error decoding IDs: {e}")
+                return
+
+        elif len(argument) == 2:
+            try:
+                ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+            except Exception as e:
+                print(f"Error decoding ID: {e}")
+                return
+
+        temp_msg = await message.reply("<b>Please wait...</b>")
+        try:
+            messages = await get_messages(client, ids)
+        except Exception as e:
+            await message.reply_text("Something went wrong!")
+            print(f"Error getting messages: {e}")
+            return
+        finally:
+            await temp_msg.delete()
+
+        codeflix_msgs = []
+        for msg in messages:
+            caption = (CUSTOM_CAPTION.format(previouscaption="" if not msg.caption else msg.caption.html,
+                                             filename=msg.document.file_name) if bool(CUSTOM_CAPTION) and bool(msg.document)
+                       else ("" if not msg.caption else msg.caption.html))
+
+            reply_markup = msg.reply_markup if DISABLE_CHANNEL_BUTTON else None
+
+            try:
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                                            reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                codeflix_msgs.append(copied_msg)
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                copied_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,
+                                            reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                codeflix_msgs.append(copied_msg)
+            except Exception as e:
+                print(f"Failed to send message: {e}")
+                pass
+
+        if FILE_AUTO_DELETE > 0:
+            notification_msg = await message.reply(
+                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော {get_exp_time(FILE_AUTO_DELETE)} မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
+            )
+
+            await asyncio.sleep(FILE_AUTO_DELETE)
+
+            for snt_msg in codeflix_msgs:
+                if snt_msg:
+                    try:
+                        await snt_msg.delete()
+                    except Exception as e:
+                        print(f"Error deleting message {snt_msg.id}: {e}")
+
+            try:
+                reload_url = (
+                    f"https://t.me/{client.username}?start={message.command[1]}"
+                    if message.command and len(message.command) > 1
+                    else None
+                )
+                keyboard = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ!", url=reload_url)]]
+                ) if reload_url else None
+
+                await notification_msg.edit(
+                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇  ဗွီဒီယိုများကိုဖျက်လိုက်ပါပြီ ပြန်ကြည့်ရန် Get File Again ပြန်ယူရန် ကိုနှိပ်ပါ ။\n\n ဇာတ်ကားများမဖျက်ခင် Save Folder ထဲကိုပို့ထားပါ သို့မဟုတ် တစ်စုံတစ်ယောက်ကိုပို့ထားပါ။</b>",
+                    reply_markup=keyboard
+                )
+            except Exception as e:
+                print(f"Error updating notification with 'Get File Again' button: {e}")
+    else:
+        reply_markup = InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/Nova_Flix/50")],
+                [
+                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
+                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data="help")
+                ]
+            ]
+        )
+        await message.reply_photo(
+            photo=START_PIC,
+            caption=START_MSG.format(
+                first=message.from_user.first_name,
+                last=message.from_user.last_name,
+                username=None if not message.from_user.username else '@' + message.from_user.username,
+                mention=message.from_user.mention,
+                id=message.from_user.id
+            ),
+            reply_markup=reply_markup,
+            message_effect_id=5104841245755180586
+        )
+        return
+
+# Create a global dictionary to store chat data
+chat_data_cache = {}
+
+async def not_joined(client: Client, message: Message):
+    temp = await message.reply("<b><i>ᴡᴀɪᴛ ᴀ sᴇᴄ..</i></b>")
+
+    user_id = message.from_user.id
+    buttons = []
+    count = 0
+
+    try:
+        all_channels = await db.show_channels()
+        for total, chat_id in enumerate(all_channels, start=1):
+            mode = await db.get_channel_mode(chat_id)
+
+            await message.reply_chat_action(ChatAction.TYPING)
+
+            if not await is_sub(client, user_id, chat_id):
+                try:
+                    if chat_id in chat_data_cache:
+                        data = chat_data_cache[chat_id]
+                    else:
+                        data = await client.get_chat(chat_id)
+                        chat_data_cache[chat_id] = data
+
+                    name = data.title
+
+                    if mode == "on" and not data.username:
+                        invite = await client.create_chat_invite_link(
+                            chat_id=chat_id,
+                            creates_join_request=True,
+                            expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
+                        )
+                        link = invite.invite_link
+                    else:
+                        if data.username:
+                            link = f"https://t.me/{data.username}"
+                        else:
+                            invite = await client.create_chat_invite_link(
+                                chat_id=chat_id,
+                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
+                            )
+                            link = invite.invite_link
+
+                    buttons.append([InlineKeyboardButton(text=name, url=link)])
+                    count += 1
+                    await temp.edit(f"<b>{'! ' * count}</b>")
+
+                except Exception as e:
+                    print(f"Error with chat {chat_id}: {e}")
+                    return await temp.edit(
+                        f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
+                        f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+                    )
+
+        try:
+            buttons.append([
+                InlineKeyboardButton(
+                    text='♻️ Tʀʏ Aɢᴀɪɴ',
+                    url=f"https://t.me/{client.username}?start={message.command[1]}"
+                )
+            ])
+        except IndexError:
+            pass
+
+        await message.reply_photo(
+            photo=FORCE_PIC,
+            caption=FORCE_MSG.format(
+                first=message.from_user.first_name,
+                last=message.from_user.last_name,
+                username=None if not message.from_user.username else '@' + message.from_user.username,
+                mention=message.from_user.mention,
+                id=message.from_user.id
+            ),
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+
+    except Exception as e:
+        print(f"Final Error: {e}")
+        await temp.edit(
+            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
+            f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+        )
+
+@Bot.on_message(filters.command('commands') & filters.private & filters.user(ADMINS))
+async def bcmd(bot: Bot, message: Message):
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data="close")]])
+    await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
