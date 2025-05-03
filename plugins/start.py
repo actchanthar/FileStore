@@ -37,7 +37,7 @@ async def start_command(client: Client, message: Message):
     if user_id in banned_users:
         return await message.reply_text(
             "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
-            "<i>Contact support if you think this is a mistake.</i>",
+            "<i>Contact support @actanibot if you think this is a mistake.</i>",
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
             )
@@ -118,7 +118,7 @@ async def start_command(client: Client, message: Message):
 
         if FILE_AUTO_DELETE > 0:
             notification_msg = await message.reply(
-                f"<b>Tʜɪs Fɪʟᴇ ᴡɪʟʟ ʙᴇ Dᴇʟᴇᴛᴇᴅ ɪɴ  {get_exp_time(FILE_AUTO_DELETE)}. Pʟᴇᴀsᴇ sᴀᴠᴇ ᴏʀ ғᴏʀᴡᴀʀᴅ ɪᴛ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ʙᴇғᴏʀᴇ ɪᴛ ɢᴇᴛs Dᴇʟᴇᴛᴇᴅ.</b>"
+                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in.{get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော  {get_exp_time(FILE_AUTO_DELETE)}  မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
             )
 
             await asyncio.sleep(FILE_AUTO_DELETE)
@@ -141,7 +141,7 @@ async def start_command(client: Client, message: Message):
                 ) if reload_url else None
 
                 await notification_msg.edit(
-                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇</b>",
+                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇  ဗွီဒီယိုများကိုဖျက်လိုက်ပါပြီ ပြန်ကြည့်ရန် Get File Again ပြန်ယူရန် ကိုနှိပ်ပါ ။\n\n ဇာတ်ကားများမဖျက်ခင် Save Folder ထဲကိုပို့ထားပါ သို့မဟုတ် တစ်စုံတစ်ယောက်ကိုပို့ထားပါ။</b>",
                     reply_markup=keyboard
                 )
             except Exception as e:
@@ -233,7 +233,7 @@ async def not_joined(client: Client, message: Message):
                 except Exception as e:
                     print(f"Error with chat {chat_id}: {e}")
                     return await temp.edit(
-                        f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @rohit_1888</i></b>\n"
+                        f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
                         f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
                     )
 
@@ -263,7 +263,7 @@ async def not_joined(client: Client, message: Message):
     except Exception as e:
         print(f"Final Error: {e}")
         await temp.edit(
-            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @rohit_1888</i></b>\n"
+            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
             f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
         )
 
