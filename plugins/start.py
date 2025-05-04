@@ -17,7 +17,6 @@ import sys
 import time
 import string
 import string as rohit
-import humanize
 import aiohttp
 from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
