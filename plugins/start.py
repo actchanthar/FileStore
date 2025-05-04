@@ -35,6 +35,21 @@ BAN_SUPPORT = f"{BAN_SUPPORT}"
 TUT_VID = f"{TUT_VID}"
 
 #
+async def get_shortlink(shortlink_url, shortlink_api, url):
+    """Generate shortlink using ouo.io API"""
+    try:
+        api_url = f"http://ouo.io/api/{shortlink_api}?s={url}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url) as response:
+                if response.status == 200:
+                    return await response.text()
+                else:
+                    return f"http://ouo.io/qs/{shortlink_api}?s={url}"
+    except Exception as e:
+        print(f"Error generating shortlink: {e}")
+        return url
+
 #
 
 @Bot.on_message(filters.command('start') & filters.private)
