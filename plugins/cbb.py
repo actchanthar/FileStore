@@ -60,17 +60,15 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             photo=QR_PIC,
             caption=(
                 f"👋 {query.from_user.username}\n\n"
-                f"🎖️ VIP ဝင်ရန် မနက် ၇ နာရီကနေ ညနေ ၅ နာရီ အထိ  \n မနက် ၇ နာရီကနေ ညနေ ၅ နာရီ အထိသာ စာပြန်မည် :\n\n"
-                f"● {PRICE1}  For 7 7 ရက် Prime အဖွဲ့ဝင်ခြင်းအတွက် \n\n"
-                f"● {PRICE2}  For 1 လ Prime Membership အတွက် \n\n"
-                f"● {PRICE3}  For 3 အတွက် 3 လ အထွေထွေအသင်းဝင်ခြင်း။\n\n"
-                f"● {PRICE4}  အတွက် 6 လ သီးသန့် အဖွဲ့ဝင်ခြင်း\n\n"
-                f"● {PRICE5}  1 Year Prime Membership အတွက်\n\n\n"
+                f"🎖️ Available Plans :\n\n"
+                f"● {PRICE1}  For 7 Days Prime Membership\n\n"
+                f"● {PRICE2}  For 1 Month Prime Membership\n\n"
+                f"● {PRICE3}  For 3 Months Prime Membership\n\n"
+                f"● {PRICE4}  For 6 Months Prime Membership\n\n"
+                f"● {PRICE5}  For 1 Year Prime Membership\n\n\n"
                 f"💵 ASK KBZ or Wave or AYA Pay or PayPal ID TO ADMIN AND PAY THERE -  <code>{UPI_ID}</code>\n\n\n"
-                f"♻️  ♻️ ငွေပေးချေပြီးပါက လက်ငင်းအသင်းဝင်ခွင့်ရရှိမည်ဖြစ်ပါသည်။ \n\n\n"
-                f"‼️ 
-
- ‼️ ငွေပေးချေပြီးနောက် Screenshot ပေးပို့ရမည်ဖြစ်ပြီး စိတ်ကြိုက်အချိန်စာရင်းသွင်းလိုပါက admin ကိုမေးပါ။"
+                f"♻️ After Payment You Will Get Instant Membership \n\n\n"
+                f"‼️ Must Send Screenshot after payment & If anyone want custom time membrship then ask admin"
             ),
             reply_markup=InlineKeyboardMarkup(
                 [
