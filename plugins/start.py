@@ -83,7 +83,7 @@ async def start_command(client: Client, message: Message):
                 link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
                 btn = [
                     [InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ •", url=link), 
-                    InlineKeyboardButton('• ᴛᴜᴛᴏʀɪᴀʟ အသုံးပြုနည်း •', url=TUT_VID)],
+                    InlineKeyboardButton('• ᴛᴜᴛoဇာတ်ကားကြည့်နည်း •', url=TUT_VID)],
                     [InlineKeyboardButton('• VIP or Premium ဝင်ရန် •', callback_data='premium')]
                 ]
                 return await message.reply(
