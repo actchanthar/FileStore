@@ -92,7 +92,7 @@ async def start_command(client: Client, message: Message):
                     ]
                     logger.info(f"Generated verification link for user {user_id}")
                     return await message.reply(
-                        f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝗿𝗲𝗳𝗿𝗲𝘀𝗵 𝘆𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲..\n\n<b> Video ကြည့်ရန် Bot ကိုသုံးနိုင်စွမ်း အချိန်ပြည့်သွားပါပြီဗျ!! Bot သုံးနိုင်စွမ်း\n\n : {get_exp_time(VERIFY_EXPIRE)}\nရယူရန် Open Link ကိုနှိပ်ပါ ၊ ထို့နောက် မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။ Bot အသုံးပြုနိုင်စွမ်း {get_exp_time(VERIFY_EXPIRE)}</b>",
+                        f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝗿𝗲𝗳𝗿�_e𝘀𝗵 𝘆𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲..\n\n<b> Video ကြည့်ရန် Bot ကိုသုံးနိုင်စွမ်း အချိန်ပြည့်သွားပါပြီဗျ!! Bot သုံးနိုင်စွမ်း\n\n : {get_exp_time(VERIFY_EXPIRE)}\nရယူရန် Open Link ကိုနှိပ်ပါ ၊ ထို့နောက် မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။ Bot အသုံးပြုနိုင်စွမ်း {get_exp_time(VERIFY_EXPIRE)}</b>",
                         reply_markup=InlineKeyboardMarkup(btn),
                         protect_content=False,
                         quote=True
@@ -132,12 +132,14 @@ async def start_command(client: Client, message: Message):
                     ids = range(start, end + 1) if start <= end else list(range(start, end - 1, -1))
                 except Exception as e:
                     logger.error(f"Error decoding IDs for user {user_id}: {str(e)}")
+                    await message.reply_text("Invalid link format!")
                     return
             elif len(argument) == 2:
                 try:
                     ids = [int(int(argument[1]) / abs(client.db_channel.id))]
                 except Exception as e:
                     logger.error(f"Error decoding ID for user {user_id}: {str(e)}")
+                    await message.reply_text("Invalid link format!")
                     return
 
             temp_msg = await message.reply("<b>Please wait...</b>")
@@ -201,28 +203,36 @@ async def start_command(client: Client, message: Message):
                     )
                 except Exception as e:
                     logger.error(f"Error updating notification for user {user_id}: {str(e)}")
-        return
-    else:
-        reply_markup = InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/addlist/E6xNJDDlvj43ZGU1")],
-                [InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
-                 InlineKeyboardButton('ʜᴇʟᴘ •', callback_data="help")]
-            ]
-        )
-        await message.reply_photo(
-            photo=START_PIC,
-            caption=START_MSG.format(
-                first=message.from_user.first_name,
-                last=message.from_user.last_name,
-                username=None if not message.from_user.username else '@' + message.from_user.username,
-                mention=message.from_user.mention,
-                id=message.from_user.id
-            ),
-            reply_markup=reply_markup,
-            message_effect_id=5104841245755180586
-        )
-        logger.info(f"Sent start message to user {user_id}")
+            return
+        except IndexError:
+            logger.error(f"Invalid base64 string format for user {user_id}")
+            await message.reply_text("Invalid link format!")
+            return
+        except Exception as e:
+            logger.error(f"Error processing message for user {user_id}: {str(e)}")
+            await message.reply_text("Something went wrong!")
+            return
+
+    reply_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/addlist/E6xNJDDlvj43ZGU1")],
+            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
+             InlineKeyboardButton('ʜᴇʟᴘ •', callback_data="help")]
+        ]
+    )
+    await message.reply_photo(
+        photo=START_PIC,
+        caption=START_MSG.format(
+            first=message.from_user.first_name,
+            last=message.from_user.last_name,
+            username=None if not message.from_user.username else '@' + message.from_user.username,
+            mention=message.from_user.mention,
+            id=message.from_user.id
+        ),
+        reply_markup=reply_markup,
+        message_effect_id=5104841245755180586
+    )
+    logger.info(f"Sent start message to user {user_id}")
 
 async def not_joined(client: Client, message: Message):
     user_id = message.from_user.id
