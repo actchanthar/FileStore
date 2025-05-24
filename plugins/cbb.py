@@ -67,8 +67,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 f"● {PRICE4}  အတွက် 6 လ သီးသန့် အဖွဲ့ဝင်ခြင်း\n\n"
                 f"● {PRICE5}  1 Year Prime Membership အတွက်\n\n\n"
                 f"💵 ASK KBZ or Wave or AYA Pay or PayPal ID TO ADMIN AND PAY THERE -  <code>{UPI_ID}</code>\n\n\n"
-                f"♻️ After Payment You Will Get Instant Membership \n\n\n"
-                f"‼️ Must Send Screenshot after payment & If anyone want custom time membrship then ask admin"
+                f"♻️  ♻️ ငွေပေးချေပြီးပါက လက်ငင်းအသင်းဝင်ခွင့်ရရှိမည်ဖြစ်ပါသည်။ \n\n\n"
+                f"‼️ 
+
+ ‼️ ငွေပေးချေပြီးနောက် Screenshot ပေးပို့ရမည်ဖြစ်ပြီး စိတ်ကြိုက်အချိန်စာရင်းသွင်းလိုပါက admin ကိုမေးပါ။"
             ),
             reply_markup=InlineKeyboardMarkup(
                 [
