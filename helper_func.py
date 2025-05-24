@@ -1,33 +1,16 @@
-#(©)CodeFlix_Bots
-#rohit_1888 on Tg #Dont remove this line
-
 import base64
 import re
 import asyncio
 import time
+import aiohttp
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
 from config import *
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-from shortzy import Shortzy
 from pyrogram.errors import FloodWait
 from database.database import *
 
-
-
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
-#used for cheking if a user is admin ~Owner also treated as admin level
+# Used for checking if a user is admin ~Owner also treated as admin level
 async def check_admin(filter, client, update):
     try:
         user_id = update.from_user.id       
@@ -35,19 +18,6 @@ async def check_admin(filter, client, update):
     except Exception as e:
         print(f"! Exception in check_admin: {e}")
         return False
-
-
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 async def is_subscribed(client, user_id):
     channel_ids = await db.show_channels()
@@ -69,19 +39,6 @@ async def is_subscribed(client, user_id):
             return False
 
     return True
-
-
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 async def is_sub(client, user_id, channel_id):
     try:
@@ -106,19 +63,6 @@ async def is_sub(client, user_id, channel_id):
     except Exception as e:
         print(f"[!] Error in is_sub(): {e}")
         return False
-
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
 
 async def encode(string):
     string_bytes = string.encode("ascii")
@@ -165,7 +109,7 @@ async def get_message_id(client, message):
         return 0
     elif message.text:
         pattern = "https://t.me/(?:c/)?(.*)/(\d+)"
-        matches = re.match(pattern,message.text)
+        matches = re.match(pattern, message.text)
         if not matches:
             return 0
         channel_id = matches.group(1)
@@ -178,7 +122,6 @@ async def get_message_id(client, message):
                 return msg_id
     else:
         return 0
-
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -201,7 +144,6 @@ def get_readable_time(seconds: int) -> str:
     up_time += ":".join(time_list)
     return up_time
 
-
 def get_exp_time(seconds):
     periods = [('days', 86400), ('hours', 3600), ('mins', 60), ('secs', 1)]
     result = ''
@@ -211,38 +153,20 @@ def get_exp_time(seconds):
             result += f'{int(period_value)} {period_name}'
     return result
 
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
-
-async def get_shortlink(url, api, link):
-    shortzy = Shortzy(api_key=api, base_site=url)
-    link = await shortzy.convert(link)
-    return link
-
+async def get_shortlink(shortlink_url, shortlink_api, url):
+    """Generate shortlink using ouo.io API"""
+    try:
+        api_url = f"http://{shortlink_url}/api/{shortlink_api}?s={url}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url) as response:
+                if response.status == 200:
+                    return await response.text()
+                else:
+                    return f"http://{shortlink_url}/qs/{shortlink_api}?s={url}"
+    except Exception as e:
+        print(f"Error generating shortlink: {e}")
+        return url
 
 subscribed = filters.create(is_subscribed)
 admin = filters.create(check_admin)
-
-#rohit_1888 on Tg :
-
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
