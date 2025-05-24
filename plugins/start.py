@@ -3,7 +3,7 @@ import os
 import random
 import sys
 import re
-import string
+import string as rohit
 import time
 from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
@@ -81,7 +81,7 @@ async def start_command(client: Client, message: Message):
                     return await message.reply("Error processing verification. Please try again.")
 
             if not verify_status['is_verified'] and not is_premium:
-                token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+                token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
                 await db.update_verify_status(user_id, verify_token=token, link="")
                 try:
                     link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
@@ -92,7 +92,7 @@ async def start_command(client: Client, message: Message):
                     ]
                     logger.info(f"Generated verification link for user {user_id}")
                     return await message.reply(
-                        f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝗿𝗲𝗳𝗿�_e𝘀𝗵 𝘆𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲..\n\n<b> Video ကြည့်ရန် Bot ကိုသုံးနိုင်စွမ်း အချိန်ပြည့်သွားပါပြီဗျ!! Bot သုံးနိုင်စွမ်း\n\n : {get_exp_time(VERIFY_EXPIRE)}\nရယူရန် Open Link ကိုနှိပ်ပါ ၊ ထို့နောက် မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။ Bot အသုံးပြုနိုင်စွမ်း {get_exp_time(VERIFY_EXPIRE)}</b>",
+                        f"𝗬𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝗵𝗮𝘀 𝗲𝘅𝗽𝗶𝗿𝗲𝗱. 𝗣𝗹𝗲𝗮𝘀𝗲 𝗿𝗲𝗳𝗿𝗲𝘀𝗵 𝘆𝗼𝘂𝗿 𝘁𝗼𝗸𝗲𝗻 𝘁𝗼 𝗰𝗼𝗻𝘁𝗶𝗻𝘂𝗲..\n\n<b> Video ကြည့်ရန် Bot ကိုသုံးနိုင်စွမ်း အချိန်ပြည့်သွားပါပြီဗျ!! Bot သုံးနိုင်စွမ်း\n\n : {get_exp_time(VERIFY_EXPIRE)}\nရယူရန် Open Link ကိုနှိပ်ပါ ၊ ထို့နောက် မလုပ်တတ်ရင် ᴛᴜᴛᴏʀɪᴀʟ ကိုနှိပ်ပါ။ Bot အသုံးပြုနိုင်စွမ်း {get_exp_time(VERIFY_EXPIRE)}</b>",
                         reply_markup=InlineKeyboardMarkup(btn),
                         protect_content=False,
                         quote=True
