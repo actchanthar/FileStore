@@ -22,6 +22,9 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# Initialize chat data cache
+chat_data_cache = {}
+
 BAN_SUPPORT = f"{BAN_SUPPORT}"
 TUT_VID = f"{TUT_VID}"
 
@@ -243,15 +246,22 @@ async def not_joined(client: Client, message: Message):
 
     try:
         all_channels = await db.show_channels()
+        if not all_channels:
+            logger.warning(f"No channels configured for force-sub for user {user_id}")
+            await temp.delete()
+            return await message.reply_text("No channels configured for subscription. Please contact support.")
+
         for chat_id in all_channels:
             mode = await db.get_channel_mode(chat_id)
             await message.reply_chat_action(ChatAction.TYPING)
 
             if not await is_sub(client, user_id, chat_id):
                 try:
+                    # Check cache first
                     if chat_id in chat_data_cache:
                         data = chat_data_cache[chat_id]
                     else:
+                        # Fetch chat data and cache it
                         data = await client.get_chat(chat_id)
                         chat_data_cache[chat_id] = data
 
@@ -276,16 +286,22 @@ async def not_joined(client: Client, message: Message):
                     await temp.edit(f"<b>{'! ' * count}</b>")
                 except Exception as e:
                     logger.error(f"Error with chat {chat_id} for user {user_id}: {str(e)}")
-                    return await temp.edit(
-                        f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
-                        f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+                    await temp.delete()
+                    return await message.reply_text(
+                        f"<b><i>! Error, Contact developer to solve the issues @actanibot</i></b>\n"
+                        f"<blockquote expandable><b>Reason:</b> {e}</blockquote>"
                     )
+
+        if count == 0:
+            logger.info(f"User {user_id} is subscribed to all required channels")
+            await temp.delete()
+            return
 
         try:
             buttons.append([
                 InlineKeyboardButton(
-                    text='♻️ Tʀʏ Aɢᴀɪɴ',
-                    url=f"https://t.me/{client.username}?start={message.command[1]}"
+                    text='♻️ Try Again',
+                    url=f"https://t.me/{client.username}?start={message.command[1] if message.command and len(message.command) > 1 else ''}"
                 )
             ])
         except IndexError:
@@ -305,9 +321,10 @@ async def not_joined(client: Client, message: Message):
         logger.info(f"Sent force subscription message to user {user_id}")
     except Exception as e:
         logger.error(f"Error in not_joined for user {user_id}: {str(e)}")
-        await temp.edit(
-            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibit</i></b>\n"
-            f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+        await temp.delete()
+        return await message.reply_text(
+            f"<b><i>! Error, Contact developer to solve the issues @actanibit</i></b>\n"
+            f"<blockquote expandable><b>Reason:</b> {e}</blockquote>"
         )
     finally:
         await temp.delete()
