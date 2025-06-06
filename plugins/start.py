@@ -1,4 +1,3 @@
-
 import asyncio
 import os
 import random
@@ -33,7 +32,6 @@ async def start_command(client: Client, message: Message):
         )
     # ✅ Check Force Subscription
     if not await is_subscribed(client, user_id):
-        #await temp.delete()
         return await not_joined(client, message)
 
     # File auto-delete time in seconds (Set your desired time in seconds here)
@@ -83,7 +81,7 @@ async def start_command(client: Client, message: Message):
             return
         finally:
             await temp_msg.delete()
- 
+
         codeflix_msgs = []
 
         for msg in messages:
@@ -116,7 +114,7 @@ async def start_command(client: Client, message: Message):
 
         if FILE_AUTO_DELETE > 0:
             notification_msg = await message.reply(
-                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in.{get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော  {get_exp_time(FILE_AUTO_DELETE)}  မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
+                f"<b>❗️❗️❗️IMPORTANT❗️️❗️❗️ This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Please save or forward it to your saved messages before it gets deleted.\n\nဇာတ်ကားများသည် သတ်မှတ်ထားသော {get_exp_time(FILE_AUTO_DELETE)} မိနစ်အတွင်းပြန်ဖျက်ပါမည်။ ထို့ကြောင့် ဇာတ်ကားများကို Save Folder ထဲအမြန်ထည့်ထားပြီး ဇာတ်ကားများကိုကြည့်ပေးပါ။</b>"
             )
 
             await asyncio.sleep(FILE_AUTO_DELETE)
@@ -147,13 +145,11 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-                    [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/addlist/Ee84C0UVOYRlOTll")],
-
-    [
-                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data = "about"),
-                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data = "help")
-
-    ]
+                [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/addlist/Ee84C0UVOYRlOTll")],
+                [
+                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
+                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data="help")
+                ]
             ]
         )
         await message.reply_photo(
@@ -167,16 +163,8 @@ async def start_command(client: Client, message: Message):
             ),
             reply_markup=reply_markup,
             message_effect_id=5104841245755180586)  # 🔥
-        
+
         return
-
-
-
-#=====================================================================================##
-# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
-# Ask Doubt on telegram @CodeflixSupport
-
-
 
 # Create a global dictionary to store chat data
 chat_data_cache = {}
@@ -186,6 +174,7 @@ async def not_joined(client: Client, message: Message):
 
     user_id = message.from_user.id
     buttons = []
+    current_row = []
     count = 0
 
     try:
@@ -212,21 +201,27 @@ async def not_joined(client: Client, message: Message):
                             chat_id=chat_id,
                             creates_join_request=True,
                             expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
-                            )
+                        )
                         link = invite.invite_link
-
                     else:
                         if data.username:
                             link = f"https://t.me/{data.username}"
                         else:
                             invite = await client.create_chat_invite_link(
                                 chat_id=chat_id,
-                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None)
+                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
+                            )
                             link = invite.invite_link
 
-                    buttons.append([InlineKeyboardButton(text=name, url=link)])
+                    # Add button to current row
+                    current_row.append(InlineKeyboardButton(text=name, url=link))
                     count += 1
                     await temp.edit(f"<b>{'! ' * count}</b>")
+
+                    # If 2 buttons are in the current row, append the row to buttons and reset current_row
+                    if len(current_row) == 2:  # Change to 1 for single column, 3 for three columns, etc.
+                        buttons.append(current_row)
+                        current_row = []
 
                 except Exception as e:
                     print(f"Error with chat {chat_id}: {e}")
@@ -234,6 +229,10 @@ async def not_joined(client: Client, message: Message):
                         f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @actanibot</i></b>\n"
                         f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
                     )
+
+        # Append any remaining buttons in the last row
+        if current_row:
+            buttons.append(current_row)
 
         # Retry Button
         try:
@@ -265,9 +264,7 @@ async def not_joined(client: Client, message: Message):
             f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
         )
 
-#=====================================================================================##
-
 @Bot.on_message(filters.command('commands') & filters.private & admin)
 async def bcmd(bot: Bot, message: Message):        
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data = "close")]])
-    await message.reply(text=CMD_TXT, reply_markup = reply_markup, quote= True)
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data="close")]])
+    await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
