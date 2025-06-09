@@ -7,7 +7,7 @@ from logging.handlers import RotatingFileHandler
 #rohit_1888 on Tg
 #--------------------------------------------
 #Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8154426339")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "6977715954:AAHEUiLcQPyfGXz17v4J8f4GQCeiUi5_8Wc")
 APP_ID = int(os.environ.get("APP_ID", "25255650")) #Your API ID from my.telegram.org
 API_HASH = os.environ.get("API_HASH", "8eeadfa8f9b832d18657a63585b75bc0") #Your API Hash from my.telegram.org
 #--------------------------------------------
@@ -19,7 +19,7 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "5062124930")) # Owner id
 PORT = os.environ.get("PORT", "8001")
 #--------------------------------------------
 DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://act23:act23@cluster0.x1lrbcd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = os.environ.get("DATABASE_NAME", "actshare")
+DB_NAME = os.environ.get("DATABASE_NAME", "actit")
 #--------------------------------------------
 FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "10"))  # 0 means no expiry
 BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/stranger77777777777")
@@ -35,7 +35,7 @@ HELP_TXT = "<b><blockquote>ᴛʜɪs ɪs ᴀɴ ғɪʟᴇ Store @actanimemm\n\n❏
 ABOUT_TXT = "<b><blockquote>◈ ᴄʀᴇᴀᴛᴏʀ: <a href=https://t.me/actanibot>ACT</a>\n◈ ꜰᴏᴜɴᴅᴇʀ ᴏꜰ : <a href=https://t.me/actanimemm>ACT Anime MM</a>\n◈ ᴀɴɪᴍᴇ ᴄʜᴀɴɴᴇʟ : <a href=https://t.me/actanimemm>ᴀɴɪᴍᴇ ᴄʀᴜɪsᴇ</a>\n◈ Hentai Channel: <a href=https://t.me/+v9h86AMQ5dowYWFl> Hentai</a>\n◈ ᴀᴅᴜʟᴛ ᴍᴀɴʜᴡᴀ : <a href=https://t.me/hentai_manhwammsub>ᴘᴏʀɴʜᴡᴀs</a>\n◈ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href=https://t.me/actanibot>ACT</a></blockquote></b>"#--------------------------------------------
 #--------------------------------------------
 START_MSG = os.environ.get("START_MESSAGE", "<b>ʜᴇʟʟᴏ {first}\n\n<blockquote>Video / File သိမ်းပြီးပြန်ပို့တဲ့ bot ပါ။</blockquote></b>")
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b> Brother အောက်ကချာနယ် အရင်ဝင်ပါ ပြီးမှ ဝင်ပြီးရင် Reload ကိုနှိပ်ပါ အရင်မဝင်ဘဲမနှိပ်ပါနဲ့ ဖိုင်မရပါဘူး.</b>")
+FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b> Brother အောက်ကချာနယ် အရင်ဝင်ပါ ပြီးမှ ဝင်ပြီးရင် Try Again ကိုနှိပ်ပါ အရင်မဝင်ဘဲမနှိပ်ပါနဲ့ ဖိုင်မရပါဘူး.</b>")
 
 CMD_TXT = """<blockquote><b>» ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs:</b></blockquote>
 
