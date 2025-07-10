@@ -4,8 +4,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7724996871:AAF_UJKW9C7u0vV9w-Wl7Fh_0KVhd3pgci8")
-APP_ID = int(os.environ.get("APP_ID", "22649259"))
-API_HASH = os.environ.get("API_HASH", "545169590ffbfe0bf8bade55e3a1cfde")
+APP_ID = int(os.environ.get("APP_ID", "23034561"))
+API_HASH = os.environ.get("API_HASH", "30b5ce6ea2bbbbc3fe5368bbce4d2db8")
 
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002767870571"))
 OWNER = os.environ.get("OWNER", "When_the_night_falls_my_soul_se")
@@ -13,7 +13,7 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "5062124930"))
 
 PORT = os.environ.get("PORT", "8009")
 DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://2234act:2234act@cluster0.rwjacbj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = os.environ.get("DATABASE_NAME", "ju")
+DB_NAME = os.environ.get("DATABASE_NAME", "ju1")
 
 FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "0"))
 BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/stranger77777777777")
