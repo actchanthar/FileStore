@@ -3,17 +3,17 @@ from os import environ, getenv
 import logging
 from logging.handlers import RotatingFileHandler
 
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7724996871:AAGGCmryN7leKLAoxjSMwaqKz82tdcJO4Qg")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8131406730:AAFocMtWbQRyXg1OndI5Q7aHhrqv_CcifI4")
 APP_ID = int(os.environ.get("APP_ID", "23034561"))
 API_HASH = os.environ.get("API_HASH", "30b5ce6ea2bbbbc3fe5368bbce4d2db8")
 
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002767870571"))
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002798673047"))
 OWNER = os.environ.get("OWNER", "When_the_night_falls_my_soul_se")
 OWNER_ID = int(os.environ.get("OWNER_ID", "5062124930"))
 
 PORT = os.environ.get("PORT", "8009")
 DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://2234act:2234act@cluster0.rwjacbj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = os.environ.get("DATABASE_NAME", "ju1")
+DB_NAME = os.environ.get("DATABASE_NAME", "Black")
 
 FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "0"))
 BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/stranger77777777777")
@@ -46,7 +46,7 @@ CMD_TXT = """<blockquote><b>» ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs:</b></blockqu
 <b>›› /admins :</b> ɢᴇᴛ ʟɪsᴛ ᴏꜰ ᴀᴅᴍɪɴs
 """
 
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ @Join_C_hannel</b>")
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ https://t.me/addlist/6Nyr71Q5TTg2MTg1</b>")
 PROTECT_CONTENT = os.environ.get('PROTECT_CONTENT', "False") == "True"
 DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True'
 
