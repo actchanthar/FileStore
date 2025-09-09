@@ -3,19 +3,19 @@ from os import environ, getenv
 import logging
 from logging.handlers import RotatingFileHandler
 
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7828")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8396114305:AAG_8Gwfu_TnaQjhNrh-lH4TrT1BQDOWtiQ")
 APP_ID = int(os.environ.get("APP_ID", "23034561"))
 API_HASH = os.environ.get("API_HASH", "30b5ce6ea2bbbbc3fe5368bbce4d2db8")
 
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002772334487"))
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002999551636"))
 OWNER = os.environ.get("OWNER", "When_the_night_falls_my_soul_se")
 OWNER_ID = int(os.environ.get("OWNER_ID", "5062124930"))
 
-PORT = os.environ.get("PORT", "8009")
-DB_URI = os.environ.get("DATABASE_URL", "fuck")
-DB_NAME = os.environ.get("DATABASE_NAME", "nyi")
+PORT = os.environ.get("PORT", "8020")
+DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://act:actdata@cluster0.z6trhoh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DB_NAME = os.environ.get("DATABASE_NAME", "ju1")
 
-FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "0"))
+FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "300"))
 BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/stranger77777777777")
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "200"))
 
